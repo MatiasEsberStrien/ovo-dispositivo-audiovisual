@@ -79,6 +79,43 @@ dialog::backdrop{background:rgba(18,33,61,.72)}
 .voz .et{display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acento);font-weight:700;margin-bottom:.2rem}
 .encabezado .voz{margin:1.4rem 0 0}
 .encabezado{max-width:none}.encabezado>p{max-width:56rem}.encabezado .voz{max-width:none}
+
+/* animaciones */
+:root{--ease-out:cubic-bezier(0.23,1,0.32,1)}
+@keyframes subir{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes aparecer{from{opacity:0}to{opacity:1}}
+@keyframes onda{from{opacity:.55;transform:scale(1)}to{opacity:0;transform:scale(1.6)}}
+.encabezado>*{animation:subir .6s var(--ease-out) both}
+.encabezado>:nth-child(2){animation-delay:.08s}.encabezado>:nth-child(3){animation-delay:.16s}
+.ficha{animation:subir .6s var(--ease-out) both;
+  transition:transform .2s var(--ease-out),border-color .2s ease,box-shadow .2s ease}
+.ficha:nth-child(1){animation-delay:.22s}.ficha:nth-child(2){animation-delay:.28s}.ficha:nth-child(3){animation-delay:.34s}
+.ficha:nth-child(4){animation-delay:.4s}.ficha:nth-child(5){animation-delay:.46s}.ficha:nth-child(6){animation-delay:.52s}
+@media (hover:hover) and (pointer:fine){
+  .ficha:hover{transform:translateY(-3px);box-shadow:0 10px 24px -14px rgba(18,33,61,.45)}}
+.ficha:active{transform:scale(.98);transition-duration:.12s}
+dialog{opacity:0;transform:translateY(16px) scale(.97);
+  transition:opacity .24s var(--ease-out),transform .24s var(--ease-out),overlay .24s allow-discrete,display .24s allow-discrete}
+dialog[open]{opacity:1;transform:none}
+@starting-style{dialog[open]{opacity:0;transform:translateY(16px) scale(.97)}}
+dialog::backdrop{opacity:0;transition:opacity .24s ease,overlay .24s allow-discrete,display .24s allow-discrete}
+dialog[open]::backdrop{opacity:1}
+@starting-style{dialog[open]::backdrop{opacity:0}}
+dialog[open] .panel>*{animation:subir .45s var(--ease-out) both}
+dialog[open] .panel>:nth-child(2){animation-delay:.04s}dialog[open] .panel>:nth-child(3){animation-delay:.08s}
+dialog[open] .panel>:nth-child(4){animation-delay:.12s}dialog[open] .panel>:nth-child(5){animation-delay:.16s}
+dialog[open] .panel>:nth-child(6){animation-delay:.2s}dialog[open] .panel>:nth-child(7){animation-delay:.24s}
+dialog[open] .panel>:nth-child(8){animation-delay:.28s}dialog[open] .panel>:nth-child(n+9){animation-delay:.32s}
+.voz button{position:relative;transition:transform .12s var(--ease-out)}
+.voz button:active{transform:scale(.94)}
+.voz button.sonando::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--acento);
+  animation:onda 1.4s ease-out infinite;pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+  .encabezado>*,.ficha,dialog[open] .panel>*{animation-name:aparecer}
+  .ficha:hover,.ficha:active,.voz button:active{transform:none}
+  dialog,dialog[open]{transform:none}
+  @starting-style{dialog[open]{transform:none}}
+  .voz button.sonando::after{animation:none;opacity:.6}}
 </style>
 </head>
 <body>
@@ -207,12 +244,12 @@ document.querySelectorAll('.ficha').forEach(function(f){
 });
 document.getElementById('cerrar').addEventListener('click',function(){dlg.close()});
 var sonido=new Audio(), boton=null;
-window.parar=function(){sonido.pause();if(boton){boton.textContent='▶';boton=null}}
+window.parar=function(){sonido.pause();if(boton){boton.textContent='▶';boton.classList.remove('sonando');boton=null}}
 document.addEventListener('click',function(e){
   var b=e.target.closest('.voz button'); if(!b) return;
   if(boton===b){parar();return}
   parar(); sonido.src='audio/'+b.dataset.a+'.mp3'; sonido.currentTime=0;
-  sonido.play().then(function(){boton=b;b.textContent='❚❚'}).catch(function(){});
+  sonido.play().then(function(){boton=b;b.textContent='❚❚';b.classList.add('sonando')}).catch(function(){});
 });
 sonido.addEventListener('ended',function(){parar()});
 dlg.addEventListener('close',function(){parar()});
