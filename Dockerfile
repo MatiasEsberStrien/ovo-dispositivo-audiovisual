@@ -1,6 +1,7 @@
 FROM python:3.12-alpine
 WORKDIR /sitio
+COPY servidor.py .
 COPY index.html .
 COPY img ./img
 COPY audio ./audio
-CMD ["sh","-c","python3 -m http.server ${PORT:-8080} --bind 0.0.0.0"]
+CMD ["python3", "servidor.py"]
