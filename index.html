@@ -117,6 +117,16 @@ dialog[open] .panel>:nth-child(8){animation-delay:.28s}dialog[open] .panel>:nth-
   dialog,dialog[open]{transform:none}
   @starting-style{dialog[open]{transform:none}}
   .voz button.sonando::after{animation:none;opacity:.6}}
+
+/* ficha de cierre */
+.ficha.cierre{grid-column:1/-1;background:var(--acento);border-color:var(--acento);color:#fff;
+  flex-direction:row;align-items:center;justify-content:space-between;gap:1.5rem;padding:1.7rem 1.6rem}
+.ficha.cierre .rot{color:#FFE2CF}
+.ficha.cierre .q{font-size:clamp(1.4rem,3vw,2rem)}
+.ficha.cierre .flecha{font-size:2rem;line-height:1;flex-shrink:0;transition:transform .2s var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.ficha.cierre:hover .flecha{transform:translateX(6px)}}
+.ficha.cierre:nth-child(7){animation-delay:.58s}
+.gracias{margin:1.6rem 0 0;padding-top:1.2rem;border-top:1px solid var(--linea);font-weight:700;font-size:1.1rem}
 </style>
 </head>
 <body>
@@ -135,6 +145,7 @@ dialog[open] .panel>:nth-child(8){animation-delay:.28s}dialog[open] .panel>:nth-
     <button class="ficha ancha" data-p="p4"><span class="rot">Continuidad</span><p class="q">«¿Puedo seguir estudiando?»</p><span class="cuenta">5 universidades públicas, también a distancia</span></button>
     <button class="ficha ancha" data-p="p5"><span class="rot">Derechos</span><p class="q">Derechos y obligaciones al empezar a trabajar</p><span class="cuenta">5 temas, con fuente oficial</span></button>
     <button class="ficha ancha" data-p="p6"><span class="rot">Información</span><p class="q">«¿Qué preguntar antes de salir a buscar trabajo?»</p><span class="cuenta">6 preguntas, 2 destinatarios</span></button>
+    <button class="ficha cierre" id="ficha-cierre"><span><span class="rot">Reflexión final</span><p class="q">Antes de seguir tu camino</p></span><span class="flecha" aria-hidden="true">→</span></button>
   </div>
 
 </div>
@@ -214,7 +225,7 @@ var VOZ = {"p1": "Con lo que estudiaste podés trabajar en una empresa, en el Es
 var VOCES = {"p1": ["¿De qué forma salgo al mundo laboral?", "Estudiante a medio cuatrimestre de recibirse"], "p2": ["Piden bastante experiencia […] y por ahí es algo que no siempre uno tiene.", "Estudiante de 2.º año, pasante"], "p3": ["Tiene que saber inteligencia artificial la persona que egresa.", "Referente institucional"], "p4": ["Me quedaría más tranquila si todavía seguiría lo que es la licenciatura […] siento que nunca aprendí bien del todo.", "Estudiante de 2.º año, pasante"], "p5": ["Durante la cursada muchos trabajos son voluntariados, son pasantías, son prácticas.", "Estudiante a medio cuatrimestre de recibirse"], "p6": ["Yo siempre consulto mucho y me guía mucho.", "Estudiante de 2.º año, sobre una compañera que ya trabaja"]};
 function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML}
 var dlg=document.getElementById('dlg'), panel=document.getElementById('panel');
-document.querySelectorAll('.ficha').forEach(function(f){
+document.querySelectorAll('.ficha[data-p]').forEach(function(f){
   f.addEventListener('click',function(){
     var c=CONTENIDO[f.dataset.p], h='';
     h+='<p class="rot">'+esc(c.rot)+'</p><h2>'+esc(c.t)+'</h2>';
@@ -254,6 +265,14 @@ document.addEventListener('click',function(e){
 sonido.addEventListener('ended',function(){parar()});
 dlg.addEventListener('close',function(){parar()});
 dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+var CIERRE = "Felicitaciones, llegaste al final del recorrido de este dispositivo audiovisual. Este es un camino que recién empieza, y te invitamos a transitarlo con entusiasmo. Podés volver a este recurso en cada paso que des, todas las veces que lo necesites.";
+document.getElementById('ficha-cierre').addEventListener('click',function(){
+  if(window.parar) parar();
+  panel.innerHTML='<p class="rot">Reflexión final</p><h2>Antes de seguir tu camino</h2>'+
+    '<div class="voz"><button type="button" data-a="cierre" aria-label="Escuchar la reflexión final">▶</button><p><span class="et">Escuchá</span>'+esc(CIERRE)+'</p></div>'+
+    '<p class="gracias">Gracias por recorrer este dispositivo.</p>';
+  dlg.showModal();
+});
 </script>
 
 </body>
